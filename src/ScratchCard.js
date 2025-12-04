@@ -82,13 +82,34 @@ const ScratchCard = () => {
   const revealAll = () => {
     const canvas = canvasRef.current;
     const ctx = contextRef.current;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    canvas.style.opacity = '1';
+    canvas.style.transition = 'opacity 1s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    requestAnimationFrame(() => {
+      canvas.style.opacity = '0';
+    });
+    
+    setTimeout(() => {
+      ctx.clearRect(0, 0, 320, 320);
+      canvas.style.opacity = '1';
+      canvas.style.transition = 'none';
+    }, 1000);
   };
 
   const reset = () => {
+    const canvas = canvasRef.current;
     const ctx = contextRef.current;
+    
+    canvas.style.opacity = '1';
+    canvas.style.transition = 'none';
+    
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0, 0, 320, 320);
     ctx.fillStyle = '#333';
     ctx.fillRect(0, 0, 320, 320);
+    ctx.globalCompositeOperation = 'destination-out';
+    
     setRevealed(false);
     setIsDrawing(false);
   };
