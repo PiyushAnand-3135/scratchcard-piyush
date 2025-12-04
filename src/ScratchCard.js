@@ -37,7 +37,7 @@ const ScratchCard = () => {
     }
     
     const percentage = (transparent / (canvas.width * canvas.height)) * 100;
-    if (percentage > 40) {
+    if (percentage > 60) {
       setRevealed(true);
       revealAll();
     }
