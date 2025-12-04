@@ -120,10 +120,10 @@ const ScratchCard = () => {
       <div className="card">
         <div className="content">
           <div className="coupon">
-            <h2>50% OFF</h2>
+            <h2>33% OFF</h2>
             <p>Your Exclusive Discount</p>
             <div className="code-box">
-              <span>LUCKY50</span>
+              <span>XLCV 33</span>
             </div>
             <p className="validity">Valid till Dec 31, 2025</p>
           </div>
