@@ -116,32 +116,36 @@ const ScratchCard = () => {
 
   return (
     <div className="container">
-      <h1>Scratch Card</h1>
-      <div className="card">
-        <div className="content">
-          <div className="coupon">
-            <h2>33% OFF</h2>
-            <p>Your Exclusive Discount</p>
-            <div className="code-box">
-              <span>XLCV 33</span>
+      <div className="phone-frame">
+        <div className="phone-screen">
+          <h1>Scratch Card</h1>
+          <div className="card">
+            <div className="content">
+              <div className="coupon">
+                <h2>33% OFF</h2>
+                <p>Your Exclusive Discount</p>
+                <div className="code-box">
+                  <span>XLCV 33</span>
+                </div>
+                <p className="validity">Valid till Dec 31, 2025</p>
+              </div>
             </div>
-            <p className="validity">Valid till Dec 31, 2025</p>
+            <canvas
+              ref={canvasRef}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+              onTouchMove={handleTouchMove}
+              className="canvas"
+            />
           </div>
+          {revealed && <p className="msg">Revealed!</p>}
+          <button onClick={reset} className="btn">Reset</button>
         </div>
-        <canvas
-          ref={canvasRef}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          onTouchMove={handleTouchMove}
-          className="canvas"
-        />
       </div>
-      {revealed && <p className="msg">Revealed!</p>}
-      <button onClick={reset} className="btn">Reset</button>
     </div>
   );
 };
