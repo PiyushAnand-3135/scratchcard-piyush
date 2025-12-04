@@ -5,7 +5,6 @@ const ScratchCard = () => {
   const canvasRef = useRef(null);
   const [revealed, setRevealed] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [scratches, setScratches] = useState(0);
   const contextRef = useRef(null);
 
   useEffect(() => {
@@ -15,6 +14,7 @@ const ScratchCard = () => {
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#333';
     ctx.fillRect(0, 0, 320, 320);
+    ctx.globalCompositeOperation = 'destination-out';
     contextRef.current = ctx;
   }, []);
 
@@ -25,32 +25,59 @@ const ScratchCard = () => {
     return { x: clientX - rect.left, y: clientY - rect.top };
   };
 
-  const scratch = (e) => {
-    const { x, y } = getPos(e);
-    contextRef.current.clearRect(x - 15, y - 15, 30, 30);
+  const checkReveal = () => {
+    const canvas = canvasRef.current;
+    const ctx = contextRef.current;
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    
+    let transparent = 0;
+    for (let i = 3; i < data.length; i += 4) {
+      if (data[i] === 0) transparent++;
+    }
+    
+    const percentage = (transparent / (canvas.width * canvas.height)) * 100;
+    if (percentage > 40) {
+      setRevealed(true);
+      revealAll();
+    }
   };
 
-  const handleMouseDown = () => setIsDrawing(true);
-  const handleMouseUp = () => {
-    setIsDrawing(false);
-    setScratches(prev => {
-      const newCount = prev + 1;
-      if (newCount >= 3) {
-        setRevealed(true);
-        revealAll();
-      }
-      return newCount;
-    });
+  const scratch = (x, y) => {
+    const ctx = contextRef.current;
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    ctx.fill();
+    checkReveal();
   };
+
+  const handleMouseDown = (e) => {
+    setIsDrawing(true);
+    const { x, y } = getPos(e);
+    scratch(x, y);
+  };
+
+  const handleMouseUp = () => setIsDrawing(false);
+  
   const handleMouseMove = (e) => {
     if (!isDrawing || revealed) return;
-    scratch(e);
+    const { x, y } = getPos(e);
+    scratch(x, y);
+  };
+
+  const handleTouchStart = (e) => {
+    setIsDrawing(true);
+    const { x, y } = getPos(e);
+    scratch(x, y);
   };
 
   const handleTouchMove = (e) => {
     if (revealed) return;
-    scratch(e);
+    const { x, y } = getPos(e);
+    scratch(x, y);
   };
+
+  const handleTouchEnd = () => setIsDrawing(false);
 
   const revealAll = () => {
     const canvas = canvasRef.current;
@@ -64,7 +91,6 @@ const ScratchCard = () => {
     ctx.fillRect(0, 0, 320, 320);
     setRevealed(false);
     setIsDrawing(false);
-    setScratches(0);
   };
 
   return (
@@ -87,8 +113,8 @@ const ScratchCard = () => {
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseUp}
-          onTouchStart={() => setIsDrawing(true)}
-          onTouchEnd={() => setIsDrawing(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
           onTouchMove={handleTouchMove}
           className="canvas"
         />
